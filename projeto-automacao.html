@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estudo de Caso | Automação de WhatsApp</title>
+    
+    <style>
+        /* Estilos específicos para a página do projeto */
+        body {
+            /* Fundo com um degradê sutil para o efeito fosco */
+            background: linear-gradient(45deg, #1a1a1a, #0d0d0d);
+            background-attachment: fixed;
+        }
+
+        .project-details {
+            max-width: 900px;
+            margin: 4rem auto;
+            padding: 2.5rem;
+            
+            /* Efeito de Vidro Fosco (Frosted Glass) */
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(8px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .project-details h1 {
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #ffffff;
+            opacity: 0;
+            animation: fadeInUp 1s forwards 0.2s;
+        }
+        
+        .project-details h2 {
+            font-size: 2rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 0.5rem;
+            color: #ffffff;
+            opacity: 0;
+            animation: fadeInUp 1s forwards 0.4s;
+        }
+
+        .project-details p, .project-details ul, .project-details li {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 1rem;
+            color: #e0e0e0;
+            opacity: 0;
+            animation: fadeIn 1s forwards 0.6s;
+        }
+
+        /* Estilo para termos técnicos */
+        .code-term {
+            background-color: #2b2b2b;
+            padding: 0.2rem 0.4rem;
+            border-radius: 5px;
+            font-family: 'Poppins', monospace;
+            font-weight: 600;
+        }
+
+        /* Estilo para listas */
+        .project-details ul {
+            padding-left: 2rem;
+            list-style: none;
+        }
+        .project-details ul li {
+            position: relative;
+            padding-left: 1.5rem;
+        }
+        .project-details ul li::before {
+            content: '>';
+            color: var(--secondary-color);
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+        
+        .project-image-container {
+            text-align: center;
+            margin: 2rem 0;
+            opacity: 0;
+            animation: fadeInScale 1s forwards 1s;
+        }
+
+        .project-image-container img, .project-image-container video {
+            max-width: 100%;
+            height: auto;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+        }
+
+        .back-to-home {
+            display: inline-block;
+            margin-top: 2rem;
+            text-decoration: none;
+            color: var(--secondary-color);
+            font-weight: bold;
+            transition: color 0.3s;
+            opacity: 0;
+            animation: fadeIn 1s forwards 1.2s;
+        }
+        
+        .back-to-home:hover {
+            color: var(--primary-color);
+        }
+        
+        /* Definição das Animações */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Importando as fontes do Google Fonts */
+        @import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Poppins:wght@400;600;700&display=swap');
+        
+        /* Configurações Globais */
+        :root {
+            --bg-color: #1a1a1a;
+            --text-color: #e0e0e0;
+            --primary-color: #6a0dad; 
+            --secondary-color: #b057da;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Lato', sans-serif;
+            background: linear-gradient(45deg, #1a1a1a, #0d0d0d);
+            background-attachment: fixed;
+            color: var(--text-color);
+            line-height: 1.6;
+            scroll-behavior: smooth;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Poppins', sans-serif;
+        }
+    </style>
+</head>
+<body>
+
+    <section class="project-details">
+        <a href="" class="back-to-home">&larr; Voltar para o Portfólio</a>
+
+        <h1>Sistema de Atendimento Inteligente e Automação de Vendas</h1>
+        
+        <h2>O Desafio</h2>
+        <p>Criar um sistema automatizado para o WhatsApp que otimizasse o atendimento ao cliente, gerasse leads e auxiliasse no processo de vendas 24 horas por dia, 7 dias por semana. O projeto buscava transformar a comunicação passiva em uma ferramenta estratégica para conversão de vendas.</p>
+
+        <h2>A Solução</h2>
+        <p>Desenvolvi um chatbot de IA robusto e escalável para o WhatsApp utilizando a plataforma n8n. O fluxo de automação foi projetado para: </p>
+        <ul>
+            <li>**Processar Linguagem Natural (PLN):** Utilizei o modelo GPT-4.1-mini da OpenAI para entender as intenções dos clientes e fornecer respostas personalizadas e contextuais.</li>
+            <li>**Gerenciar Dados:** A comunicação com o cliente foi armazenada e gerenciada em bancos de dados como Supabase e Redis para garantir a continuidade e a personalização da conversa.</li>
+            <li>**Integrar com APIs:** A Z-API foi utilizada para conectar o n8n à API oficial do WhatsApp, garantindo a comunicação fluida e confiável.</li>
+        </ul>
+        
+        <div class="project-image-container">
+            <img src="automação.png" alt="Fluxo de automação no n8n">
+            <p><i>Captura de tela do fluxo de trabalho no n8n.</i></p>
+        </div>
+
+        <h2>Análise Técnica da Automação</h2>
+        
+        <p>O fluxo de trabalho foi projetado como o cérebro da automação. Ele não espera por um clique; está sempre de prontidão, ouvindo por novas mensagens através do <span class="code-term">Webhook ZAPI</span>. Essa arquitetura centralizada permite que cada etapa da lógica seja executada de forma precisa e eficiente.</p>
+        
+        <p>A primeira etapa de execução é crucial. Um nó de função (<span class="code-term">Detectar Tipos de Mensagem</span>) analisa o conteúdo recebido para identificar se a mensagem é um "texto", "imagem" ou "áudio". Essa lógica inicial é a base que permite que a automação reaja de forma inteligente a diferentes formatos de mídia.</p>
+        
+        <p>Em seguida, um nó de <span class="code-term">Switch</span> (<span class="code-term">Verificar Tipo de Mensagem</span>) entra em ação. Ele direciona o fluxo de trabalho para o caminho correto, garantindo que cada tipo de mensagem receba o tratamento apropriado. Esse roteamento é o que torna o sistema tão modular e escalável, permitindo a adição de novas funcionalidades complexas no futuro.</p>
+
+        <h2>Os Resultados</h2>
+        <p>A implementação do sistema resultou em benefícios significativos:</p>
+        <ul>
+            <li>**Otimização do Atendimento 24/7:** Clientes agora recebem respostas imediatas, mesmo fora do horário comercial.</li>
+            <li>**Personalização de Respostas:** A IA permite que as interações sejam mais naturais e relevantes para cada cliente.</li>
+            <li>**Gestão de Clientes:** O sistema contribui para a gestão e o suporte estratégico, ajudando na conversão de vendas.</li>
+        </ul>
+        
+        <div class="project-image-container">
+            <video src="placeholder-video.mp4" controls></video>
+            <p><i>Demonstração da interação do chatbot com o cliente.</i></p>
+        </div>
+        
+    </section>
+
+</body>
+</html>

@@ -1,0 +1,152 @@
+{
+  "nodes": [
+    {
+      "id": "Webhook_ZAPI",
+      "name": "Webhook ZAPI",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [200, 300],
+      "parameters": {
+        "path": "mensagem-zapi",
+        "method": "POST",
+        "responseMode": "onReceived"
+      }
+    },
+    {
+      "id": "DetectarTipos",
+      "name": "Detectar Tipos de Mensagem",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [450, 300],
+      "parameters": {
+        "functionCode": "const dados = $json;\nlet tipos = [];\n\nif (dados.text && dados.text.message) {\n  tipos.push(\"texto\");\n}\n\nif (dados.photo) {\n  tipos.push(\"imagem\");\n}\n\nif (dados.audio) {\n  tipos.push(\"áudio\");\n}\n\nreturn [{\n  json: {\n    ...dados,\n    tiposMensagem: tipos\n  }\n}];"
+      }
+    },
+    {
+      "id": "SwitchTipo",
+      "name": "Verificar Tipo de Mensagem",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 1,
+      "position": [700, 300],
+      "parameters": {
+        "value1": "={{$json[\"tiposMensagem\"]}}",
+        "rules": [
+          {
+            "operation": "contains",
+            "value": "texto"
+          },
+          {
+            "operation": "contains",
+            "value": "imagem"
+          },
+          {
+            "operation": "contains",
+            "value": "áudio"
+          }
+        ]
+      }
+    },
+    {
+      "id": "TextoSaida",
+      "name": "Mensagem é TEXTO",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [950, 200],
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "resultado",
+              "value": "Texto detectado!"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "ImagemSaida",
+      "name": "Mensagem é IMAGEM",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [950, 300],
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "resultado",
+              "value": "Imagem detectada!"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "AudioSaida",
+      "name": "Mensagem é ÁUDIO",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [950, 400],
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "resultado",
+              "value": "Áudio detectado!"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook ZAPI": {
+      "main": [
+        [
+          {
+            "node": "Detectar Tipos de Mensagem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Detectar Tipos de Mensagem": {
+      "main": [
+        [
+          {
+            "node": "Verificar Tipo de Mensagem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verificar Tipo de Mensagem": {
+      "main": [
+        [
+          {
+            "node": "Mensagem é TEXTO",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mensagem é IMAGEM",
+            "type": "main",
+            "index": 1
+          }
+        ],
+        [
+          {
+            "node": "Mensagem é ÁUDIO",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    }
+  },
+  "name": "ZAPI - Detectar Tipos de Mensagem",
+  "active": false
+}

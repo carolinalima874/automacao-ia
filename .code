@@ -1,152 +1,558 @@
 {
+  "name": "Automação Universo Drop",
   "nodes": [
     {
-      "id": "Webhook_ZAPI",
-      "name": "Webhook ZAPI",
-      "type": "n8n-nodes-base.webhook",
-      "typeVersion": 1,
-      "position": [200, 300],
       "parameters": {
-        "path": "mensagem-zapi",
-        "method": "POST",
-        "responseMode": "onReceived"
+        "operation": "get",
+        "tableId": "Usuário",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "telefone",
+              "keyValue": "={{ $('Webhook').item.json.body.phone }}"
+            },
+            {
+              "keyName": "nome",
+              "keyValue": "={{ $('Webhook').item.json.body.senderName }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -560,
+        80
+      ],
+      "id": "f922088b-5c98-45e1-80e8-930c17e4dc35",
+      "name": "Supabase Buscar Clientes",
+      "alwaysOutputData": true,
+      "executeOnce": false,
+      "credentials": {
+        "supabaseApi": {
+          "id": "vdo7GKJoYW8qo4x1",
+          "name": "Supabase account 3"
+        }
       }
     },
     {
-      "id": "DetectarTipos",
-      "name": "Detectar Tipos de Mensagem",
-      "type": "n8n-nodes-base.function",
-      "typeVersion": 1,
-      "position": [450, 300],
       "parameters": {
-        "functionCode": "const dados = $json;\nlet tipos = [];\n\nif (dados.text && dados.text.message) {\n  tipos.push(\"texto\");\n}\n\nif (dados.photo) {\n  tipos.push(\"imagem\");\n}\n\nif (dados.audio) {\n  tipos.push(\"áudio\");\n}\n\nreturn [{\n  json: {\n    ...dados,\n    tiposMensagem: tipos\n  }\n}];"
+        "tableId": "Usuário",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "nome",
+              "fieldValue": "={{ $('Webhook').item.json.body.senderName }}"
+            },
+            {
+              "fieldId": "telefone",
+              "fieldValue": "={{ $('Webhook').item.json.body.phone }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        128,
+        128
+      ],
+      "id": "80dddefc-918c-443b-bdae-26e220a2c7e7",
+      "name": "Supabase Adicionar o cliente ao BD",
+      "credentials": {
+        "supabaseApi": {
+          "id": "vdo7GKJoYW8qo4x1",
+          "name": "Supabase account 3"
+        }
       }
     },
     {
-      "id": "SwitchTipo",
-      "name": "Verificar Tipo de Mensagem",
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Webhook').item.json.body.text.message }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notEmpty",
+                      "singleValue": true
+                    },
+                    "id": "2adf1feb-4bdc-4087-8447-e18467c4b03b"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Texto"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "05f34d10-1721-48d7-855f-cb4c8aba7034",
+                    "leftValue": "={{ $('Webhook').item.json.body.audio.audioUrl }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notEmpty",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "audio"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "096f8395-9bd6-416d-bca8-9f358c3e2442",
+                    "leftValue": "={{ $('Webhook').item.json.body.image.imageUrl }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notEmpty",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "imagem"
+            }
+          ]
+        },
+        "options": {}
+      },
       "type": "n8n-nodes-base.switch",
-      "typeVersion": 1,
-      "position": [700, 300],
-      "parameters": {
-        "value1": "={{$json[\"tiposMensagem\"]}}",
-        "rules": [
-          {
-            "operation": "contains",
-            "value": "texto"
-          },
-          {
-            "operation": "contains",
-            "value": "imagem"
-          },
-          {
-            "operation": "contains",
-            "value": "áudio"
-          }
-        ]
-      }
+      "typeVersion": 3.2,
+      "position": [
+        272,
+        -160
+      ],
+      "id": "84f6089a-e969-44bc-bc1b-c5d1ea27a5bf",
+      "name": "Switch"
     },
     {
-      "id": "TextoSaida",
-      "name": "Mensagem é TEXTO",
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 1,
-      "position": [950, 200],
       "parameters": {
-        "values": {
-          "string": [
+        "assignments": {
+          "assignments": [
             {
-              "name": "resultado",
-              "value": "Texto detectado!"
+              "id": "512e1f3c-1cc2-4942-bc21-3116e74b1a50",
+              "name": "Nome",
+              "value": "={{ $('Webhook').item.json.body.senderName }}",
+              "type": "string"
+            },
+            {
+              "id": "7915614c-3215-408d-bd35-d0e16507a780",
+              "name": "Telefone",
+              "value": "={{ $('Webhook').item.json.body.phone }}",
+              "type": "string"
+            },
+            {
+              "id": "d5b4a54e-7123-4170-88a7-f603eaba36fd",
+              "name": "Mensagem",
+              "value": "={{ $json.Mensagem }}",
+              "type": "string"
+            },
+            {
+              "id": "cade70de-18d9-4990-b248-99d32050b7be",
+              "name": "ID Instancia",
+              "value": "3E2CE3ADC5A430147F8F1664B40E8DC7",
+              "type": "string"
+            },
+            {
+              "id": "f0a26988-b755-4635-9e27-1bb875d3c885",
+              "name": "Token da Instancia",
+              "value": "DB078CEB5405D783536CDA8C",
+              "type": "string"
+            },
+            {
+              "id": "2803780b-c151-4ace-b1d1-144cae639610",
+              "name": "Client Token",
+              "value": "Ff9b55c03f02540fbbb97d8579ddfcdb0S",
+              "type": "string"
             }
           ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2080,
+        -176
+      ],
+      "id": "218e4ceb-f8e8-466e-b5e2-6cc271da233b",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4384da01-50c1-414c-ad6a-618051379c52",
+              "name": "Mensagem",
+              "value": "={{ $('Webhook').item.json.body.text.message }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1184,
+        -384
+      ],
+      "id": "f9376d58-9105-4246-8282-98e72710e983",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.Mensagem }}",
+        "options": {
+          "systemMessage": "\"Olá, bem-vindo(a) à Universo Drop, seu fornecedor dropshipping nacional. Me chamo Luna, como posso ajudar hoje?\"\nIdentidade e Tom de Voz\n•\tNome do agente: Luna\n•\tPersonalidade: Amigável, confiante, empática e focada em soluções.\n•\tTom de voz: Profissional, mas próximo; linguagem simples, clara e persuasiva.\n•\tUso de emojis: Moderado, apenas para reforçar empatia e proximidade.\n•\tSempre se apresentar no início do atendimento: \"Olá, bem-vindo(a) à Universo Drop, seu fornecedor dropshipping nacional. Eu sou a Luna, como posso ajudar hoje?\"\n•\tApós responder a dúvida do cliente, faça no máximo mais duas perguntas para auxiliá-lo, para não deixar a conversa muito longa. \n\nFunções e Responsabilidades do Agente\nO agente deve:\n•\tAtendimento ao Cliente: Responder dúvidas sobre planos, serviços e funcionamento da empresa.\n•\tVendas Persuasivas: Usar técnicas de copywriting, gatilhos mentais (escassez, autoridade, prova social, benefício), e apresentar sempre o próximo passo para o cliente.\n•\tSuporte Técnico: Ajudar com orientações sobre como usar a plataforma/serviços.\n•\tMentoria Individual: Fornecer dicas e orientações iniciais para quem busca crescer no dropshipping, incentivando o cliente a contratar a mentoria individual.\n•\tRelacionamento: Manter a conversa fluida, identificar necessidades do cliente e personalizar as respostas.\nRegras de Atendimento\n•\tSempre confirmar entendimento antes de responder.\n•\tNunca deixar perguntas sem resposta.\n•\tEvitar respostas robóticas ou excessivamente técnicas sem explicação.\n•\tApresentar comparações entre planos quando perguntado.\n•\tSugerir upgrades de forma natural durante a conversa.\n•\tEncerrar a conversa com uma call-to-action clara, direcionando para a aquisição do Plano Star One ou Star Two, ou caso o cliente tenha muitas duvidas sore a operação do dropshipping, direcionar para a compra da mentoria individual  (ex.: “Como você é iniciante no mercado e possui um potencial enorme, que tal contratar um mentoria individual para acelerar seu conhecimento e expansão da sua loja virtual?”).\n\nEstratégias de Persuasão\n•\tDestacar benefícios e diferenciais dos planos e da mentoria individual.\n•\tMostrar casos de sucesso reais (se fornecidos).\n•\tUsar urgência: promoções, vagas limitadas, bônus por tempo limitado.\n•\tFazer perguntas que levem o cliente a confirmar interesse.\n\nBase de Conhecimento\n\nSobre a Universo Drop\nA Universo Drop é um fornecedor dropshipping nacional com produtos para vários nichos como brinquedos, utilidades domésticas, linha adulta, pet, artigos para bebês e crianças, bolsas e mochilas, casa e construção, itens de decoração, informática e acessórios, eletroportáteis, informática e acessórios, moda íntima, moda praia e semi jóias.\nAtendemos todo o Brasil, com envio rápido\nEnviamos pelos Correios, Ponto de coleta Shopee, Ponto de Coleta Amazon e Ponto de coleta do Mercado Livre.\nNosso endereço é: Rua Coronel João Olintho, 544 – Sala 302, Recreio dos Bandeirantes, RJ \n\nComo funciona a parceria com a Universo Drop?\n1.\tRealizar o cadastro no site, clicando no canto superior direito, clique em “Cadastrar”\n2.\tO usuário poderá contratar o plano que melhor atender a sua necessidade.\n3.\tTemos 3 planos disponíveis, cada um com as suas características, conforme descrito abaixo:\n\n•\tPlano Star Free – Sem Cobrança\nBenefícios:\n•\tAcesso a até 30 produtos do site\n•\tEnvio dos pedidos no próximo dia util\n•\tSuporte por IA\n•\tPlano Star One – Valor: R$49,90 por mês (Plano de 12 meses)\nBenefícios:\n•\tAcesso todos os produtos do site\n•\tAcesso a planilha de dados de todos os produtos\n•\tAcesso ao banco de imagens de produtos\n•\tUma atualização de rastreio\n•\tSuporte por IA\n\n•\tPlano Star Two – Valor: R$69,90 por mês (Plano de 12 meses)\nBenefícios:\n•\tTodos os benefícios do plano Star One\n•\tEnvio dos produtos no mesmo dia*\n•\tAtualização diária dos rastreios\n•\tAcesso ao Grupo VIP\n•\tSuporte por humano\n•\tCupom de desconto Bling\n\n4.\tApós o cadastro e de acordo com o plano, o cliente terá acesso ao catálogo de produtos e poderá anunciar os  produtos na sua loja ou marketplaces (ex: Shopee, Mercado Livre, Magaine Luiza, Amazon).\n5.\tApós venda, o lojista faz o pedido no nosso site e realiza o pagamento via Pix.\n6.\tO lojista pode enviar a etiqueta de postagem própria ou adquirir conosco.\n7.\tNós cuidamos da logística e enviamos direto ao cliente \n•\tPara os clientes que possuem integração via DSLITE, consultar o catálogo pelo sistema da DSLITE.\n\nCatálogo de produtos\n•\tAproximadamente 500 itens nas categorias: brinquedos, utilidades domésticas, pet shop, casa, decoração, moda íntima, saúde, entre outros \n•\tExemplos populares: adaptadores de torneira, massageadores, almofadas, brinquedos educativos, itens para pet \n\nIntegrações\nAtualmente as integrações são realizadas pelo parceiro DSLITE (https://dslite.com.br). Integração via sistema com acesso em tempo real ao estoque e criação de pedidos.\n\nLogística e envios\n•\tEnviamos por:\no\tCorreios (com etiqueta própria ou do cliente),\no\tPonto de coleta da Shopee,  Amazon e Mercado Livre,\n\nAtendimento e suporte\n•\tHorário comercial: Segunda à Sexta, das 8h (ou 9h) às 18h .\n•\tContato:\no\tWhatsApp / Celular: (21) 96618 8616,\no\tE mail: contato@universodrop.com.br \n•\tRastreamento dos pedidos de acordo com o plano adquirido.\n•\tSuporte para: cadastros, emissão de etiquetas, dúvidas de produtos, logística e devoluções, por IA para o Plano Star Free e Star One. Suporte uma para o plano Star Two.\n\nPolítica de devolução e garantia\n•\tApós o envio, a responsabilidade por coleta/envio de devoluções (defeituosos ou recusados) é do lojista.\n•\tPodemos aceitar devoluções de mercadorias recusadas no ato, conforme avaliação do estado do produto.\n•\tDevoluções de outros casos devem ser tratadas pelo lojista com o cliente.\n•\tNo caso da devolução do produto de forma integra, reembolsamos o lojista no valor do produto.\n\nVantagens competitivas\n•\tLojista não investe em estoque: você só compra o produto com a Universo Drop após a venda.\n•\tToda a logística é responsabilidade da Universo Drop\n•\tSuporte estratégico: somos mais que fornecedores, somos parceiros.\n\nPerguntas frequentes (para script de IA)\n❓ “Como me cadastro?”\nResposta:\n\"É simples! Acesse nosso site, clique em ‘Cadastrar”, no menu superior e preencha suas informações. Selecione o plano que melhor lhe atende e pronto — você já poderá iniciar as vendas hoje mesmo!\n❓ “Quanto custa?”\nResposta:\n\"Temos três planos de forma a atender a necessidade de todos os nossos clientes. Você pode compará-los após o cadastro no painel. O pagamento do plano deverá ser feito por cartão de crédito e possui duração de 12 meses. O pagamento dos produtos é realizado via PIX, no momento da realização do pedido.\n❓ “Tempo de entrega?”\nResposta:\n\"Após confirmação do Pix, postamos em até 24 h . O cliente recebe entre 2 e 7 dias, dependendo da transportadora e da região.  Destacamos que após o despacho do pedido a Universo Drop não possui atuação em relação a entrega do pedido.\"\n❓ “E se o cliente devolver o produto?”\nResposta:\n\"O lojista cuida da devolução. Podemos aceitar devoluções no ato da entrega se o produto estiver em bom estado, mediante avaliação. O lojista poderá solicitar a devolução dos produtos diretamente para nossa loja. Quando o produto chegar ao nosso centro de distribuição, será realizada a conferencia. O produto estando em perfeito estado, realizamos o reembolso do valor do produto ao lojista.\"\n❓ “Como acompanho os pedidos?”\nResposta:\n\"Você pode acompanhar todos os pedidos pelo código de rastreio do pedido.”\n❓ “Qual o horário de atendimento?”\nResposta:\n\"Estamos disponíveis de segunda a sexta, das 8h às 18h pelo WhatsApp (21 96618 8616) ou e mail contato@universodrop.com.br.\"\n❓ “Posso anunciar os produtos em quais marketplace?”\nResposta:\n\"Você pode anunciar em sua loja virtual, Shopee, Mercado Livre, Amazon e todos os marketplaces que desejar — é só cadastrar e anunciar o produto.\"\n\n\n\n\nComo usar as informações\nO agente deverá:\n•\tIdentificar rapidamente a intenção (cadastro, preço, prazo, devolução, catálogo, suporte).\n•\tResponder com as informações estruturadas conforme o script acima.\n•\tEscalonar para atendimento humano quando:\no\tProblemas em pedidos logísticos,\no\tDevoluções,\no\tQuestões financeiras ou divergência de cobrança\no\tQuestões que não estejam relacionadas acima.\no\t\nLimites e Escalonamento\n•\tCaso o cliente solicite algo que o agente não possa resolver, encaminhar para o setor responsável.\n•\tSe identificar uma oportunidade de venda grande (parcerias ou contratos corporativos), registrar e acionar o time comercial.\n\nObjetivo Final\nCriar uma experiência de atendimento que una resolução rápida de dúvidas + persuasão de vendas, aumentando a conversão de leads e fortalecendo a imagem da Universo Drop como referência no seu nicho.\n\nLinks de Acesso:\n•\tPara contratar o Plano Star One:\nhttps://universodrop.com.br/produto/start-one/\n\n•\tPara contratar o Plano Star Two:\nhttps://universodrop.com.br/produto/start-two/\n\nInformações Sobre a Mentoria Individual\n\n1.\tObjetivo da Mentoria Individual:\nCapacitar o empreendedor iniciante ou em fase de crescimento a dominarem os fundamentos do Dropshipping e aprenderem, na prática, de acordo com o Método Do Zero ao Topo, como integrar e operar suas lojas na Shopee e Amazon, construindo um negócio rentável e escalável.\nDestacamos que a mentoria tem cunho educacional e o desempenho e resultados nas vendas nas lojas, dependerão única e exclusivamente da atuação e implementação do método por parte do empreendedor.\nA Mentoria do Zero ao Topo foi desenvolvida pela Universo Drop e será ministrada pelos membros da equipe, formada por um corpo técnico altamente qualificado.\n\n2.\tConteúdo Programático:\n\nMódulo 1 — Fundamentos do Dropshipping\n•\tO que é Dropshipping e como funciona (modelo de negócio, mitos e verdades)\n•\tVantagens e desafios do dropshipping no Brasil\n•\tComo escolher nichos de produtos \n•\tComo funciona o fornecedor UNIVERSO DROP\n\nMódulo 2 — Estruturando sua Loja na Shopee e Amazon\n•\tCriação e configuração de contas profissionais na Shopee e Amazon\n•\tPolíticas das plataformas: o que você precisa saber para iniciar a operação\n•\tComo montar um catálogo de produtos sincronizado com o Bling\n•\tPrecificação – Conhecendo as comissões e definindo margem de lucro\n\nMódulo 3 — Integração de Produtos e Automação\n•\tSistema de integração Bling – O que é, como funciona, cadastro de produtos e integração com Shopee e Amazon.\n•\tComo importar produtos do fornecedor diretamente para Shopee/Amazon\n•\tAutomação de pedidos e controle de estoque\n•\tFormas de envio \n\nMódulo 4 — Criação de Site\n•\tImplementação de vendas pelo site\n•\tIntegração do Site com o Bling\n•\tExportação dos produtos do Bling para o site\n•\tAquisição de site para venda dos produtos (Opcional)\n\n\n3.\tFormato da Mentoria\n\n•\tDuração: 4 semanas (1 módulo por semana)\n•\tAulas: \no\tOnline – 2 horas por semana, conforme agendamento prévio\no\tVídeos – Serão disponibilizados vídeos com materiais complementares\n•\tMaterial de Apoio: PDFs, checklists e apresentações\n•\tGrupo de Suporte: WhatsApp para dúvidas\n•\tMentoria 1:1: As aulas serão individuais durante o período da mentoria.\n\n\n4.\tPara Quem é Essa Mentoria?\n\n✅ Iniciantes no Dropshipping que querem começar com estrutura e segurança\n✅ Empreendedores que querem vender nos marketplaces (Shopee/Amazon)\n✅ Quem busca uma alternativa de renda sem precisar investir em estoque próprio\n\n5.\tObjetivos a serem alcançados\n\nApós a conclusão da mentoria, o empreendedor terá desenvolvido:\n•\tInstalação e configuração de um sistema ERP capaz de integrar com qualquer marketplace\n•\tTerá a loja montada e configurada na Shopee pronta para operar\n•\tTerá a loja montada e configurada na Amazon pronta para operar;\n•\tCaso opte pela aquisição do site, terá um site pronto para iniciar as vendas de forma online e integrada ao ERP\n•\tEstará apto para operar uma loja de Dropshipping com integração automática aos marketplaces Amazon e Shopee.\n•\tSerá capaz de evitar os principais erros que fazem iniciantes perderem dinheiro\n•\tTerá uma operação profissional, mesmo começando do zero.\n\n\n\n6.\tInvestimento:\nMentoria Completa (4 semanas) custa R$3.500,00, mas estamos ofertando o valor promocional de R$ 2.500,00 – Parcelado em 10 vezes (10 parcelas de R$250,00), por tempo limitado.\n\nBônus: Será disponibilizado lista com 30 fornecedores de produtos para que o empreendedor seja capaz de desenvolver novos negócios.\n\nComo realizar a inscrição na Mentoria Individual?\nExiste uma pre-selação para participar da Mentoria Do Zero ao topo.\nPara você se inscrever na na pre seleção da Mentoria individual, você deverá preencher o formulário de pré-seleção no link abaixo.\n\nCompartilharemos apenas os vídeos abaixo:\nCanal do Youtube: https://www.youtube.com/@universodropoficialbr\nTutorial informando como realizar o cadastro no site e a aquisição de plano:\nhttps://www.youtube.com/watch?v=ONUFkT_0CAk\n\nData atual: {{ $now }}\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        2448,
+        -256
+      ],
+      "id": "84abecef-8769-48c2-8012-31f26cda2a8e",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        2288,
+        -48
+      ],
+      "id": "099783a2-be7b-46b7-9f65-5a746c9e53aa",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "dyGhQHNz3ZTbK6ya",
+          "name": "OpenAi account 4"
         }
       }
     },
     {
-      "id": "ImagemSaida",
-      "name": "Mensagem é IMAGEM",
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 1,
-      "position": [950, 300],
       "parameters": {
-        "values": {
-          "string": [
+        "amount": 10
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2800,
+        -256
+      ],
+      "id": "56da2aeb-59c4-4ddf-a7be-281e67693e6e",
+      "name": "Wait",
+      "webhookId": "eba0aa53-82a7-4514-a12f-b109941f4874"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.z-api.io/instances/{{ $('Edit Fields').item.json['ID Instancia'] }}/token/{{ $('Edit Fields').item.json['Token da Instancia'] }}/send-text",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
             {
-              "name": "resultado",
-              "value": "Imagem detectada!"
+              "name": "Client-Token",
+              "value": "={{ $('Edit Fields').item.json[\"Client Token\"] }}"
             }
           ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "phone",
+              "value": "={{ $('Edit Fields').item.json.Telefone }}"
+            },
+            {
+              "name": "message",
+              "value": "={{ $('AI Agent').item.json.output }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3040,
+        -256
+      ],
+      "id": "96286b24-bd82-4ff1-b6a7-a66b42a88856",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "universodrop",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -2800,
+        -48
+      ],
+      "id": "a02e950a-8504-456c-8eb2-7963dc20c50a",
+      "name": "Webhook",
+      "webhookId": "57f4d90a-bb19-40b9-9213-9844c9484cb8"
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Webhook').item.json.body.audio.audioUrl }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        752,
+        -160
+      ],
+      "id": "8c45fb76-3e4d-4cea-8b88-0aab76b7afcb",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "operation": "binaryToPropery",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        960,
+        -160
+      ],
+      "id": "e58d5d1a-d14c-44ef-9992-b9f1f4f7a1d1",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "data",
+        "options": {
+          "mimeType": "audio/mp3"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        1200,
+        -160
+      ],
+      "id": "55133ff7-7790-438c-85bf-286518a67404",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        1472,
+        -160
+      ],
+      "id": "1b6db5da-f4cc-4a34-a527-72c97e992f51",
+      "name": "Transcribe a recording",
+      "credentials": {
+        "openAiApi": {
+          "id": "dyGhQHNz3ZTbK6ya",
+          "name": "OpenAi account 4"
         }
       }
     },
     {
-      "id": "AudioSaida",
-      "name": "Mensagem é ÁUDIO",
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 1,
-      "position": [950, 400],
       "parameters": {
-        "values": {
-          "string": [
+        "assignments": {
+          "assignments": [
             {
-              "name": "resultado",
-              "value": "Áudio detectado!"
+              "id": "4384da01-50c1-414c-ad6a-618051379c52",
+              "name": "Mensagem",
+              "value": "={{ $json.text }}",
+              "type": "string"
             }
           ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1712,
+        -160
+      ],
+      "id": "c6fccb06-1c63-4590-91ba-f24e709910a0",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d87e4b51-d0cf-43d3-b230-4740e7e74bd3",
+              "name": "mensagem",
+              "value": "={{ $json.content }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1680,
+        144
+      ],
+      "id": "3adaeace-e458-469b-aa91-d752f653c86e",
+      "name": "Edit Fields3"
+    },
+    {
+      "parameters": {
+        "operation": "binaryToPropery",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        960,
+        144
+      ],
+      "id": "e65cde2c-b737-4496-b958-af5e0f19599e",
+      "name": "Extract from File3"
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "data",
+        "options": {
+          "mimeType": "image/jpeg"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        1200,
+        144
+      ],
+      "id": "be0f5a36-a662-4a49-bfc8-6690e2ad7535",
+      "name": "Convert to File2"
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Webhook').item.json.body.image.imageUrl }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        720,
+        144
+      ],
+      "id": "32481dde-dcdb-4e03-ba4e-cb10caf25eba",
+      "name": "HTTP Request4"
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "text": "Analise esta imagem",
+        "inputType": "base64",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        1472,
+        144
+      ],
+      "id": "b67ab9d6-c48f-4920-8e42-5a910e242a33",
+      "name": "Analyze image",
+      "credentials": {
+        "openAiApi": {
+          "id": "dyGhQHNz3ZTbK6ya",
+          "name": "OpenAi account 4"
         }
       }
-    }
-  ],
-  "connections": {
-    "Webhook ZAPI": {
-      "main": [
-        [
-          {
-            "node": "Detectar Tipos de Mensagem",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
     },
-    "Detectar Tipos de Mensagem": {
-      "main": [
-        [
-          {
-            "node": "Verificar Tipo de Mensagem",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Edit Fields').item.json.Telefone }}",
+        "contextWindowLength": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        2464,
+        -16
+      ],
+      "id": "3046be51-6271-456d-acc6-456415ea9265",
+      "name": "Postgres Chat Memory",
+      "credentials": {
+        "postgres": {
+          "id": "2ZiTidJjd4rfanFc",
+          "name": "Postgres account 3"
+        }
+      }
     },
-    "Verificar Tipo de Mensagem": {
-      "main": [
-        [
-          {
-            "node": "Mensagem é TEXTO",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Mensagem é IMAGEM",
-            "type": "main",
-            "index": 1
-          }
-        ],
-        [
-          {
-            "node": "Mensagem é ÁUDIO",
-            "type": "main",
-            "index": 2
-          }
-        ]
-      ]
-    }
-  },
-  "name": "ZAPI - Detectar Tipos de Mensagem",
-  "active": false
-}
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.Mensagem }}",
+        "options": {
+          "systemMessage": "=\"Olá, bem-vindo(a) à Universo Drop, seu fornecedor dropshipping nacional. Me chamo Luna, como posso ajudar hoje?\"\nIdentidade e Tom de Voz\n•\tNome do agente: Luna\n•\tPersonalidade: Amigável, confiante, empática e focada em soluções.\n•\tTom de voz: Profissional, mas próximo; linguagem simples, clara e persuasiva.\n•\tUso de emojis: Moderado, apenas para reforçar empatia e proximidade.\n•\tSempre se apresentar no início do atendimento: \"Olá, bem-vindo(a) à Universo Drop, seu fornecedor dropshipping nacional. Eu sou a Luna, como posso ajudar hoje?\"\n•\tApós responder a dúvida do cliente, faça no máximo mais duas perguntas para auxiliá-lo, para não deixar a conversa muito longa. \n\nFunções e Responsabilidades do Agente\nO agente deve:\n•\tAtendimento ao Cliente: Responder dúvidas sobre planos, serviços e funcionamento da empresa.\n•\tVendas Persuasivas: Usar técnicas de copywriting, gatilhos mentais (escassez, autoridade, prova social, benefício), e apresentar sempre o próximo passo para o cliente.\n•\tSuporte Técnico: Ajudar com orientações sobre como usar a plataforma/serviços.\n•\tMentoria Individual: Fornecer dicas e orientações iniciais para quem busca crescer no dropshipping, incentivando o cliente a contratar a mentoria individual.\n•\tRelacionamento: Manter a conversa fluida, identificar necessidades do cliente e personalizar as respostas.\nRegras de Atendimento\n•\tSempre confirmar entendimento antes de responder.\n•\tNunca deixar perguntas sem resposta.\n•\tEvitar respostas robóticas ou excessivamente técnicas sem explicação.\n•\tApresentar comparações entre planos quando perguntado.\n•\tSugerir upgrades de forma natural durante a conversa.\n•\tEncerrar a conversa com uma call-to-action clara, direcionando para a aquisição do Plano Star One ou Star Two, ou caso o cliente tenha muitas duvidas sore a operação do dropshipping, direcionar para a compra da mentoria individual  (ex.: “Como você é iniciante no mercado e possui um potencial enorme, que tal contratar um mentoria individual para acelerar seu conhecimento e expansão da sua loja virtual?”).\n\nEstratégias de Persuasão\n•\tDestacar benefícios e diferenciais dos planos e da mentoria individual.\n•\tMostrar casos de sucesso reais (se fornecidos).\n•\tUsar urgência: promoções, vagas limitadas, bônus por tempo limitado.\n•\tFazer perguntas que levem o cliente a confirmar interesse.\n\nBase de Conhecimento\n\nSobre a Universo Drop\nA Universo Drop é um fornecedor dropshipping nacional com produtos para vários nichos como brinquedos, utilidades domésticas, linha adulta, pet, artigos para bebês e crianças, bolsas e mochilas, casa e construção, itens de decoração, informática e acessórios, eletroportáteis, informática e acessórios, moda íntima, moda praia e semi jóias.\nAtendemos todo o Brasil, com envio rápido\nEnviamos pelos Correios, Ponto de coleta Shopee, Ponto de Coleta Amazon e Ponto de coleta do Mercado Livre.\nNosso endereço é: Rua Coronel João Olintho, 544 – Sala 302, Recreio dos Bandeirantes, RJ \n\nComo funciona a parceria com a Universo Drop?\n1.\tRealizar o cadastro no site, clicando no canto superior direito, clique em “Cadastrar”\n2.\tO usuário poderá contratar o plano que melhor atender a sua necessidade.\n3.\tTemos 3 planos disponíveis, cada um com as suas características, conforme descrito abaixo:\n\n•\tPlano Star Free – Sem Cobrança\nBenefícios:\n•\tAcesso a até 30 produtos do site\n•\tEnvio dos pedidos no próximo dia util\n•\tSuporte por IA\n•\tPlano Star One – Valor: R$49,90 por mês (Plano de 12 meses)\nBenefícios:\n•\tAcesso todos os produtos do site\n•\tAcesso a planilha de dados de todos os produtos\n•\tAcesso ao banco de imagens de produtos\n•\tUma atualização de rastreio\n•\tSuporte por IA\n\n•\tPlano Star Two – Valor: R$69,90 por mês (Plano de 12 meses)\nBenefícios:\n•\tTodos os benefícios do plano Star One\n•\tEnvio dos produtos no mesmo dia*\n•\tAtualização diária dos rastreios\n•\tAcesso ao Grupo VIP\n•\tSuporte por humano\n•\tCupom de desconto Bling\n\n4.\tApós o cadastro e de acordo com o plano, o cliente terá acesso ao catálogo de produtos e poderá anunciar os  produtos na sua loja ou marketplaces (ex: Shopee, Mercado Livre, Magaine Luiza, Amazon).\n5.\tApós venda, o lojista faz o pedido no nosso site e realiza o pagamento via Pix.\n6.\tO lojista pode enviar a etiqueta de postagem própria ou adquirir conosco.\n7.\tNós cuidamos da logística e enviamos direto ao cliente \n•\tPara os clientes que possuem integração via DSLITE, consultar o catálogo pelo sistema da DSLITE.\n\nCatálogo de produtos\n•\tAproximadamente 500 itens nas categorias: brinquedos, utilidades domésticas, pet shop, casa, decoração, moda íntima, saúde, entre outros \n•\tExemplos populares: adaptadores de torneira, massageadores, almofadas, brinquedos educativos, itens para pet \n\nIntegrações\nAtualmente as integrações são realizadas pelo parceiro DSLITE (https://dslite.com.br). Integração via sistema com acesso em tempo real ao estoque e criação de pedidos.\n\nLogística e envios\n•\tEnviamos por:\no\tCorreios (com etiqueta própria ou do cliente),\no\tPonto de coleta da Shopee,  Amazon e Mercado Livre,\n\nAtendimento e suporte\n•\tHorário comercial: Segunda à Sexta, das 8h (ou 9h) às 18h .\n•\tContato:\no\tWhatsApp / Celular: (21) 96618 8616,\no\tE mail: contato@universodrop.com.br \n•\tRastreamento dos pedidos de acordo com o plano adquirido.\n•\tSuporte para: cadastros, emissão de etiquetas, dúvidas de produtos, logíst
+        }

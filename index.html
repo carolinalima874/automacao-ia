@@ -172,47 +172,87 @@
 </head>
 <body>
 
-    <section class="project-details">
-        <a href="" class="back-to-home">&larr; Voltar para o Portfólio</a>
 
-        <h1>Sistema de Atendimento Inteligente e Automação de Vendas</h1>
         
-        <h2>O Desafio</h2>
-        <p>Criar um sistema automatizado para o WhatsApp que otimizasse o atendimento ao cliente, gerasse leads e auxiliasse no processo de vendas 24 horas por dia, 7 dias por semana. O projeto buscava transformar a comunicação passiva em uma ferramenta estratégica para conversão de vendas.</p>
+        <section class="project-details">
+        <a href="" class="back-to-home">&larr; Voltar para o Portfólio</a>
 
-        <h2>A Solução</h2>
-        <p>Desenvolvi um chatbot de IA robusto e escalável para o WhatsApp utilizando a plataforma n8n. O fluxo de automação foi projetado para: </p>
-        <ul>
-            <li>**Processar Linguagem Natural (PLN):** Utilizei o modelo GPT-4.1-mini da OpenAI para entender as intenções dos clientes e fornecer respostas personalizadas e contextuais.</li>
-            <li>**Gerenciar Dados:** A comunicação com o cliente foi armazenada e gerenciada em bancos de dados como Supabase e Redis para garantir a continuidade e a personalização da conversa.</li>
-            <li>**Integrar com APIs:** A Z-API foi utilizada para conectar o n8n à API oficial do WhatsApp, garantindo a comunicação fluida e confiável.</li>
-        </ul>
-        
-        <div class="project-image-container">
-            <img src="automação.png" alt="Fluxo de automação no n8n">
-            <p><i>Captura de tela do fluxo de trabalho no n8n.</i></p>
-        </div>
+        <h1>Sistema de Atendimento Inteligente e Automação de Vendas</h1>
+        
+        <h2>O Desafio</h2>
+        <p>Criar um sistema automatizado para o WhatsApp que otimizasse o atendimento ao cliente, gerasse leads e auxiliasse no processo de vendas 24 horas por dia, 7 dias por semana. O projeto buscava transformar a comunicação passiva em uma ferramenta estratégica para conversão de vendas.</p>
 
-        <h2>Análise Técnica da Automação</h2>
-        
-        <p>O fluxo de trabalho foi projetado como o cérebro da automação. Ele não espera por um clique; está sempre de prontidão, ouvindo por novas mensagens através do <span class="code-term">Webhook ZAPI</span>. Essa arquitetura centralizada permite que cada etapa da lógica seja executada de forma precisa e eficiente.</p>
-        
-        <p>A primeira etapa de execução é crucial. Um nó de função (<span class="code-term">Detectar Tipos de Mensagem</span>) analisa o conteúdo recebido para identificar se a mensagem é um "texto", "imagem" ou "áudio". Essa lógica inicial é a base que permite que a automação reaja de forma inteligente a diferentes formatos de mídia.</p>
-        
-        <p>Em seguida, um nó de <span class="code-term">Switch</span> (<span class="code-term">Verificar Tipo de Mensagem</span>) entra em ação. Ele direciona o fluxo de trabalho para o caminho correto, garantindo que cada tipo de mensagem receba o tratamento apropriado. Esse roteamento é o que torna o sistema tão modular e escalável, permitindo a adição de novas funcionalidades complexas no futuro.</p>
+        <h2>A Solução</h2>
+        <p>Desenvolvi um chatbot de IA robusto e escalável para o WhatsApp utilizando a plataforma n8n. O fluxo de automação foi projetado para: </p>
+        <ul>
+            <li>Processar Linguagem Natural (PLN): Utilizei o modelo GPT-4.1-mini da OpenAI para entender as intenções dos clientes e fornecer respostas personalizadas e contextuais.</li>
+            <li>Gerenciar Dados: A comunicação com o cliente foi armazenada e gerenciada em bancos de dados como Supabase e Redis para garantir a continuidade e a personalização da conversa.</li>
+            <li>Integrar com APIs: A Z-API foi utilizada para conectar o n8n à API oficial do WhatsApp, garantindo a comunicação fluida e confiável.</li>
+        </ul>
+        
+        <div class="project-image-container" data-animation-target>
+            <img src="automação.png" alt="Fluxo de automação no n8n">
+            <p><i>Captura de tela do fluxo de trabalho no n8n.</i></p>
+        </div>
 
-        <h2>Os Resultados</h2>
-        <p>A implementação do sistema resultou em benefícios significativos:</p>
-        <ul>
-            <li>**Otimização do Atendimento 24/7:** Clientes agora recebem respostas imediatas, mesmo fora do horário comercial.</li>
-            <li>**Personalização de Respostas:** A IA permite que as interações sejam mais naturais e relevantes para cada cliente.</li>
-            <li>**Gestão de Clientes:** O sistema contribui para a gestão e o suporte estratégico, ajudando na conversão de vendas.</li>
-        </ul>
-        
-        <div class="project-image-container">
-            <video src="placeholder-video.mp4" controls></video>
-            <p><i>Demonstração da interação do chatbot com o cliente.</i></p>
-        </div>
+        <h2>Análise Técnica da Automação</h2>
+        
+        <p>O fluxo de trabalho foi projetado como o cérebro da automação. Ele não espera por um clique; está sempre de prontidão, ouvindo por novas mensagens através do <span class="code-term">Webhook ZAPI</span>. Essa arquitetura centralizada permite que cada etapa da lógica seja executada de forma precisa e eficiente.</p>
+        
+        <p>A primeira etapa de execução é crucial. Um nó de função (<span class="code-term">Detectar Tipos de Mensagem</span>) analisa o conteúdo recebido para identificar se a mensagem é um "texto", "imagem" ou "áudio". Essa lógica inicial é a base que permite que a automação reaja de forma inteligente a diferentes formatos de mídia.</p>
+        
+        <p>Em seguida, um nó de <span class="code-term">Switch</span> (<span class="code-term">Verificar Tipo de Mensagem</span>) entra em ação. Ele direciona o fluxo de trabalho para o caminho correto, garantindo que cada tipo de mensagem receba o tratamento apropriado. Esse roteamento é o que torna o sistema tão modular e escalável, permitindo a adição de novas funcionalidades complexas no futuro.</p>
+
+        <h2>Os Resultados</h2>
+        <p>A implementação do sistema resultou em benefícios significativos:</p>
+        <ul>
+            <li>Otimização do Atendimento 24/7: Clientes agora recebem respostas imediatas, mesmo fora do horário comercial.</li>
+            <li>Personalização de Respostas: A IA permite que as interações sejam mais naturais e relevantes para cada cliente.</li>
+            <li>Gestão de Clientes: O sistema contribui para a gestão e o suporte estratégico, ajudando na conversão de vendas.</li>
+        </ul> 
+                
+        <hr style="border-color: rgba(176, 87, 218, 0.3); margin: 4rem 0;">
+
+                
+        <h2>Projeto 2: Arquitetura Avançada de Vendas e Atendimento (Agente de Negócios)</h2>
+        <p>Este fluxo representa um sistema robusto de Sales Development Representative (SDR) implementado no WhatsApp, focado na qualificação de leads, gerenciamento de conversas e transição controlada entre Inteligência Artificial e operadores humanos. A arquitetura é construída para resiliência e escala, suportando interações multimídia e mantendo a continuidade do contexto ao longo de longos períodos de interação. O cerne da solução reside na coordenação entre memória de chat, processamento avançado de linguagem e um sistema de roteamento dinâmico.</p>
+
+        <div class="project-image-container" data-animation-target>
+            <img src="agente de negocio.png" alt="Fluxo de Automação de Agente de Negócios no n8n">
+            <p><i>Visão da arquitetura de roteamento de agentes, persistência de dados e o protocolo Human-in-the-Loop.</i></p>
+        </div>
+
+        <h3 onclick="toggleDetails('details-negocios-funcionalidade')">Funcionalidades Essenciais e Mecanismos Técnicos (Clique para expandir)</h3>
+        <div id="details-negocios-funcionalidade" class="hidden-details">
+            <p>O projeto aborda desafios críticos da comunicação automatizada através dos seguintes mecanismos:</p>
+            <p>1. **Processamento Assíncrono de Conversação:** Utiliza o **Redis** como uma camada de *buffer* inteligente. Os nós de memória e um temporizador (<span class="code-term">Espera para responder</span>) trabalham em conjunto para consolidar múltiplas mensagens curtas do usuário em uma única `mensagem_completa`. Esta técnica não apenas reduz o custo computacional por chamada à LLM, mas também garante que a IA responda ao contexto completo, simulando um tempo de resposta humano natural.</p>
+            <p>2. **Roteamento de Agentes e Classificação Dinâmica:** Um agente de IA dedicado (<span class="code-term">Gerente Setor</span>) é encarregado de analisar a `mensagem_completa` e classificar a intenção do cliente, atualizando o campo `setor` no **Supabase** via uma ferramenta integrada. Essa classificação determina o roteamento subsequente para agentes especializados em tarefas de vendas (e.g., <span class="code-term">Gabriela</span>, <span class="code-term">Amanda</span>).</p>
+            <p>3. **Protocolo de Intervenção Humana (Human-in-the-Loop):** O sistema incorpora um mecanismo robusto para transição entre IA e operador. Comandos específicos (ex: "221701" no <span class="code-term">Switch2</span>) acionam a **Pausa da IA** (<span class="code-term">atendimento\_ia</span> = 'pause'). A **Reativação** é iniciada por uma palavra-chave de finalização ("Atendimento finalizado") e controlada por um temporizador (<span class="code-term">Espera para reativar a IA</span>), garantindo que o atendimento humano seja concluído antes que o controle seja devolvido à máquina.</p>
+            <p>4. **Otimização da Experiência de Saída (UX):** O <span class="code-term">Parser Chain</span> usa o Google Gemini (<span class="code-term">Google Gemini Chat Model2</span>) para processar a resposta da IA. O nó quebra o texto em mensagens curtas (300-500 caracteres), com a formatação nativa correta do WhatsApp, e o <span class="code-term">Loop Over Items3</span> envia cada segmento com um atraso de 1 segundo, imitando a cadência de digitação humana.</p>
+        </div>
+
+
+        <hr style="border-color: rgba(176, 87, 218, 0.3); margin: 4rem 0;">
+
+                
+        <h2>Projeto 3: Meu Assistente IA (Arquitetura de Orquestração Multiagentes)</h2>
+        <p>Este projeto estabelece um modelo de **Assistente Pessoal Completo**, focado na delegação de tarefas de produtividade complexas. A arquitetura central é baseada em um Agente Orquestrador que atua como um "gerente de tarefas", roteando requisições para múltiplos Sub-Agentes especializados em áreas como e-mail, agendamento de calendário, gerenciamento de contatos e pesquisa de conteúdo.</p>
+
+        <div class="project-image-container" data-animation-target>
+            <img src="assistente ia.png" alt="Fluxo do Assistente Pessoal Completo no n8n">
+            <p><i>Diagrama da arquitetura de Agente Orquestrador, mostrando a distribuição de tarefas para módulos especializados de E-mail, Calendário, Contatos e Conteúdo.</i></p>
+        </div>
+
+        <h3 onclick="toggleDetails('details-orquestracao-funcionalidade')">Funcionalidades Essenciais e Estratégia de Delegação (Clique para expandir)</h3>
+        <div id="details-orquestracao-funcionalidade" class="hidden-details">
+            <p>O projeto se destaca pela sua capacidade de coordenação e integração:</p>
+            <p>1. **Orquestrador Central e Memória:** O <span class="code-term">Assistente Pessoal Completo</span> é a camada de decisão. Ele utiliza memória de chat (<span class="code-term">Redis Chat Memory</span>) para manter o contexto e rotear a tarefa para o sub-agente ou ferramenta correta, como **AgenteDeEmail** ou **Tavily**.</p>
+            <p>2. **Encadeamento de Ferramentas (Pré-Busca Obrigatória):** Uma regra fundamental de execução foi codificada: para tarefas que dependem de dados de terceiros (ex: agendar um evento com um participante), o orquestrador é instruído a executar o <span class="code-term">AgenteDeContatos</span> primeiro para obter e-mails ou números de telefone. Somente com os dados validados, a requisição é passada para o agente final.</p>
+            <p>3. **Agente de E-mail e Calendário:** Estes sub-agentes gerenciam as APIs do Gmail e Google Calendar. O <span class="code-term">AgenteDeEmail</span> suporta o ciclo completo (enviar, responder, buscar, adicionar etiquetas, criar rascunhos em HTML), enquanto o <span class="code-term">AgenteDeCalendario</span> lida com agendamentos, buscas e manutenção (atualização/exclusão).</p>
+            <p>4. **Agente de Contatos Otimizado:** Este agente prioriza a busca por nome (<span class="code-term">Buscar Contatos</span>) antes de recorrer à busca geral de todos os contatos (<span class="code-term">Buscar Todos os Contatos do Google</span>), maximizando a eficiência da API.</p>
+        </div>
+        
+            </section>
         
     </section>
 
